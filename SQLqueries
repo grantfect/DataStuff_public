@@ -1,0 +1,22 @@
+//Simple query hitting a relational database and joining several tables to get notes and dates of opening dates made to wework locations. 
+
+SELECT "dpr"."project_id" as "projectID",
+	"area"."openingdate" as "openingdate",
+	"n1"."body" as "body"	
+
+FROM "stargate_bi_stargate"."bi_desk_projections" "dpr"
+  LEFT JOIN "stargate_bi_stargate"."bi_area" "area" ON ("dpr"."project_id" = "area"."project_id") AND ("dpr"."floor_opening_date" = "area"."openingdate")
+  LEFT JOIN "stargate_bi_stargate"."bi_projectPhase"  "phase" ON ("area"."phase_id" = "phase"."id")
+  LEFT JOIN "stargate_bi_stargate"."bi_schedule" "schedule" ON ("phase"."uuid" = "schedule"."ref_id")
+  LEFT JOIN "stargate_bi_stargate"."bi_scheduleTask" "task" ON ("schedule"."uuid" = "task"."schedule_uuid") 
+  INNER JOIN
+	(
+		SELECT 
+		MAX("n"."createddate") as "created_date",
+		"n"."entityid",
+		"n"."body"
+		FROM "stargate_bi_stargate"."bi_note" "n"
+		WHERE ("n"."entitytype" = 'schedule-task')
+		GROUP BY  "n"."entitytype","n"."entityid","n"."body"
+		) 
+		"n1" ON ("n1"."entityid" = "task"."uuid")

@@ -1,4 +1,4 @@
-//Simple query hitting a relational database and joining several tables to get notes and dates of opening dates made to wework locations. 
+//Simple query joining several tables to get notes and dates of opening dates made to wework locations. 
 
 SELECT "dpr"."project_id" as "projectID",
 	"area"."openingdate" as "openingdate",
